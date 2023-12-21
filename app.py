@@ -1,7 +1,7 @@
 from flask import Flask,render_template,request,redirect,url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-# from werkzeug.utils import secure_filename
+from werkzeug.utils import secure_filename
 import os
 
 
@@ -27,27 +27,36 @@ def hello_world():
         # print(request.form['image'])
         title=request.form['title']
         desc=request.form['desc']
-        image = request.form['image'] 
-        print(image)
-        # print(request.files['image'])
-        
-        # # Save the file and get the file path
-        # if image and image.filename != '':
-        #     filename = secure_filename(image.filename)
-        #     image.save(os.path.join('static/uploads', filename))  # Save the file to 'static/uploads' directory
-        #     image_path = f"uploads/{filename}"  # Relative path to the saved image
-        # else:
-        #     image_path = None
+        # Get the uploaded image file
+        image = request.files.get('image')
 
-        # Create and add the Todo to the database
+        # Save the file and get the file path
+        if image and image.filename != '':
+            filename = secure_filename(image.filename)
+            image.save(os.path.join('static/uploads', filename))
+            image_path = f"uploads/{filename}"  # Relative path to the saved image
+        else:
+            image_path = None
+    
        
-        todo=Todo(title=f"{title}",desc=f"{desc}",image=f"{image}")
+         # Create and add the Todo to the database
+        todo = Todo(title=f"{title}", desc=f"{desc}", image=image_path)
         db.session.add(todo)
         db.session.commit()
+        # Redirect to a GET route to prevent form resubmission on page refresh
+        return redirect(url_for('display_todos'))
+    
     allTodo=Todo.query.all()
     # print(allTodo)
 
     return render_template("index.html", allTodo=allTodo)
+
+@app.route('/display')
+def display_todos():
+    allTodo = Todo.query.all()
+    return render_template("index.html", allTodo=allTodo)
+
+
 @app.route('/show')
 def products():
     allTodo=Todo.query.all()
@@ -62,7 +71,7 @@ def update(sno):
         todo.desc = request.form['desc']
         db.session.commit()
         return redirect('/')
-    return render_template('/', todo=todo)
+    return render_template('update.html', todo=todo)
 
 @app.route('/delete/<int:sno>')
 def delete(sno):
@@ -74,4 +83,4 @@ def delete(sno):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(debug=True) # debug =True means what wver the error came it will show in Browserp
+    app.run(debug=True) # debug =True means what wver the error came it will show in Browser

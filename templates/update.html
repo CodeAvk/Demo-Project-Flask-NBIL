@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Todo{% endblock %}
+
+{% block content %}
+<div class="jumbotron text-center">
+  <h1>Update Todo</h1>
+  <form method="POST">
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-6 mb-3">
+        <label for="todoTitle" class="form-label text-start">Todo Title</label>
+        <input type="text" class="form-control form-control-sm" name="title" value="{{todo.title}}" id=" todoTitle"
+          aria-describedby="emailHelp">
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-6 mb-3">
+        <label for="todoDescription" class="form-label text-start">Todo Description</label>
+        <input class="form-control form-control-sm" name="desc" id="todoDescription" value="{{todo.desc}}"
+          rows="4"></input>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-6 mb-3">
+        <label for="todoImage" class="form-label text-start">Todo Image</label>
+        <input type="file" class="form-control form-control-sm" name="image" id="todoImage">
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+  </form>
+</div>
+{% endblock %}
